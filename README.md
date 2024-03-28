@@ -8,4 +8,4 @@ Next, in the terminal, type in the angle that the robot will start at. 0 degrees
 
 Click on the first point in the robot's path. The program will output the position relative to the robot's starting angle and position, in inches.
 
-After each click on the map, the program will output the position relative to the start position (inches) and angle (degrees). Additionally, the program will output the angle (relative to the starting angle) that the robot would need to turn to to go straight to that point from the previous point. Note that all angles outputted will be positive. 
+After each click on the map, the program will output the position relative to the start position and angle. Additionally, the program will output the angle (relative to the starting angle) that the robot would need to turn to to go straight to that point from the previous point. Note that all angles outputted will be positive. 
