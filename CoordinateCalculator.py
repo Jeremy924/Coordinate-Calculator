@@ -1,5 +1,6 @@
 import cv2
 from math import *
+import keyboard
 
 
 class VexUMap:
@@ -12,7 +13,23 @@ class VexUMap:
 
         self.step_count = 0  # the number of steps entered by the user
 
-        print("Click on starting position")
+        self.generate_code = True
+
+        print("\033[1;92mClick on starting position\033[0m")
+
+    def _to_output(self, translated_x_in, translated_y_in, angle_deg):
+        if angle_deg is not None:
+            if self.generate_code:
+                print(f'path.\033[96madd_turn\033[0m(\033[93mMyTurn\033[0m(\033[95m{angle_deg:.0f}_deg\033[0m));')
+            else:
+                print(f"\t({angle_deg:.2f} degrees relative to last step)")
+
+        if self.generate_code:
+            print("path.\033[96madd_straight\033[0m(\033[93mStraight\033[0m({" + f'\033[95m{translated_x_in:4.0f}_in\033[0m,' + f'\033[95m{translated_y_in:4.0f}_in\033[0m, \033[95m0_deg\033[0m' +
+                  '}, \033[95m0_s\033[0m, \033[93mMOTOR_SPEED\033[0m::\033[95mMID\033[0m));')
+        else:
+            position_string = f"{translated_x_in:6.2f}, {translated_y_in:6.2f}"
+            print(f"{self.step_count + 1:3}: {position_string:20}", end='')
 
     def _compute_location(self, x_in, y_in):
         # calculate location relative to the origin entered by the user
@@ -35,13 +52,10 @@ class VexUMap:
         # calculate the position on the new coordinate system, using trig
         final_pos = cos(radians(new_angle)) * magnitude, -sin(radians(new_angle)) * magnitude
 
-        # format and output the new position
-        position_string = f"({final_pos[0]:6.2f}, {final_pos[1]:6.2f})"
-        print(f"{self.step_count + 1:3}: {position_string:20}", end='')
-
         # increment the number of steps
         self.step_count += 1
 
+        relative_angle = None
         # output the angle relative to the previous step
         if self.last_pos is None:
             print()  # if there was no previous angle, then just end the line
@@ -62,9 +76,7 @@ class VexUMap:
             # all angles should be positive, to make formatting better
             if relative_angle < 0:
                 relative_angle += 360
-
-            print(f"\t({relative_angle:.2f} degrees relative to last step)")
-
+        self._to_output(final_pos[0], final_pos[1], relative_angle)
         self.last_pos = final_pos
 
     def click_event(self, event, x, y, flags, params):
@@ -74,12 +86,14 @@ class VexUMap:
 
             if self.start_pos is None:  # if no origin has been specified, then set the first point as the origin
                 self.start_pos = pos_in_inches
-                print("Starting position set")
+                print("Starting position set\n")
 
                 # get the angle of the coordinate system
                 # angle is negative because angles are flipped for reckless driver
-                self.start_angle = -float(input("Enter starting angle in degrees (clockwise is positive): "))
+                self.start_angle = -float(input("\033[1;92mEnter starting angle in degrees (clockwise is positive):\033[0m"))
                 print("Starting angle set\n\nClick on first location on map:")
+                if self.generate_code:
+                    print("\n\033[4mCode Output:\033[0m\n\033[93mPath\033[0m path;")
             else:
                 # if the origin has already by set, then compute the next spot
                 self._compute_location(pos_in_inches[0], pos_in_inches[1])
