@@ -1,6 +1,6 @@
 import cv2
 from math import *
-import keyboard
+
 
 
 class VexUMap:
@@ -15,7 +15,7 @@ class VexUMap:
 
         self.generate_code = True
 
-        print("\033[1;92mClick on starting position\033[0m")
+        print("\033[1;92mClick on position\033[0m")
 
     def _to_output(self, translated_x_in, translated_y_in, angle_deg):
         if angle_deg is not None:
@@ -83,9 +83,11 @@ class VexUMap:
         if event == cv2.EVENT_LBUTTONDOWN:
             # field is 12 ft x 12 ft
             pos_in_inches = x / width * 144, -y / height * 144
-
+            self.start_pos = (36.20262664165103, -136.17977528089887)
+            self.start_angle = -90
             if self.start_pos is None:  # if no origin has been specified, then set the first point as the origin
                 self.start_pos = pos_in_inches
+                print(self.start_pos)
                 print("Starting position set\n")
 
                 # get the angle of the coordinate system
@@ -101,7 +103,7 @@ class VexUMap:
 
 if __name__ == "__main__":
     # load the image from the file
-    img = cv2.imread("map.png", 1)
+    img = cv2.imread("C:/Users/benja/Downloads/Coordinate-Calculator/Coordinate-Calculator-main/map.png", 1)
 
     # scale the image so that it fits on the screen
     scale_percent = 50
